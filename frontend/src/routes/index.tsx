@@ -17,6 +17,7 @@ export const Route = createFileRoute("/")({
 });
 
 import React, { useEffect, useState } from "react";
+import PassengerDashboardLayout from "../components/PassengerDashboardLayout";
 
 function Navbar() {
   const links = ["Home", "Features", "How It Works", "Benefits", "Contact"];
@@ -69,13 +70,19 @@ function Hero() {
         </h1>
         <div className="mt-8 w-full flex flex-col items-center">
           <p className="text-lg md:text-xl text-yellow-100/90 max-w-xl font-medium text-center">
-            Your transport wallet for every matatu ride.
+            Your transport wallet for every ride.
           </p>
         </div>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <a href="#cta" className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-3.5 font-semibold hover:brightness-110 transition glow-yellow">
+          <button
+            className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-3.5 font-semibold hover:brightness-110 transition glow-yellow"
+            onClick={() => {
+              // Custom event to trigger dashboard navigation in SPA layout
+              window.dispatchEvent(new CustomEvent("nganya:open-dashboard"));
+            }}
+          >
             Open Wallet <ArrowRight className="size-4" />
-          </a>
+          </button>
         </div>
       </div>
     </section>
@@ -343,17 +350,28 @@ function WalletPreview() {
 }
 
 function Index() {
+  const [showDashboard, setShowDashboard] = React.useState(false);
+  React.useEffect(() => {
+    const handler = () => setShowDashboard(true);
+    window.addEventListener("nganya:open-dashboard", handler);
+    return () => window.removeEventListener("nganya:open-dashboard", handler);
+  }, []);
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <Dashboard />
-      <Benefits />
-      <WalletPreview />
-      <CTA />
-      <Footer />
+      {showDashboard ? (
+        <PassengerDashboardLayout />
+      ) : (
+        <>
+          <Navbar />
+          <Hero />
+          <Features />
+          <HowItWorks />
+          <Benefits />
+          <WalletPreview />
+          <CTA />
+          <Footer />
+        </>
+      )}
     </main>
   );
 }
