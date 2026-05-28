@@ -1,185 +1,133 @@
-import React, { useState } from "react";
+import React from "react";
+import ngcCoin from "../assets/ngc_coin.png";
 
 export default function PayFarePage() {
-  const [plate, setPlate] = useState("");
-  const [fare, setFare] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [timestamp, setTimestamp] = useState("");
-  const [touched, setTouched] = useState({ plate: false, fare: false });
-
-  // Mock wallet balance
-  const walletNGC = 12450;
-  const walletKES = 24800;
-
-  const isPlateValid = plate.trim().length >= 6;
-  const isFareValid = fare.trim() !== "" && !isNaN(Number(fare)) && Number(fare) > 0;
-  const canSubmit = isPlateValid && isFareValid && !loading;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
-      setTimestamp(new Date().toLocaleString());
-    }, 1600);
+  // Wallet data and transactions (mock)
+  const wallet = {
+    balance: "12,450",
+    fiat: "KES 37,350",
   };
-
-  const reset = () => {
-    setPlate("");
-    setFare("");
-    setSuccess(false);
-    setTimestamp("");
-    setTouched({ plate: false, fare: false });
-  };
+  const actions = [
+    { label: "Pay Fare", onClick: () => {}, icon: "💸" },
+    { label: "Receive", onClick: () => {}, icon: "⬇️" },
+    { label: "Top Up", onClick: () => {}, icon: "➕" },
+  ];
+  const transactions = [
+    {
+      type: "Ride Payment",
+      desc: "CBD → Rongai",
+      amount: "-KES 80",
+      time: "Just now",
+    },
+    {
+      type: "Reward",
+      desc: "Earned NGC",
+      amount: "+12 NGC",
+      time: "Today",
+    },
+    {
+      type: "Top Up",
+      desc: "M-Pesa Deposit",
+      amount: "+KES 500",
+      time: "Yesterday",
+    },
+  ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh]">
-      <div className="glass bg-black/60 rounded-3xl p-8 w-full max-w-md shadow-xl relative overflow-hidden animate-fade-up">
-        {!success ? (
-          <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
-            <div className="text-2xl font-bold text-yellow-200 mb-2 text-center tracking-tight">
-              Pay Fare
-            </div>
-            {/* Wallet Balance Card */}
-            <div className="glass bg-black/70 rounded-2xl p-5 flex flex-col items-center mb-2 border border-yellow-400/20 shadow-glow">
-              <div className="text-yellow-100/70 text-sm mb-1">
-                Wallet Balance
-              </div>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl md:text-4xl font-extrabold text-yellow-300 drop-shadow-glow animate-float">
-                  {walletNGC.toLocaleString()} NGC
-                </span>
-                <span className="text-yellow-100/50 text-lg font-bold mb-1">
-                  /
-                </span>
-                <span className="text-lg text-yellow-100/70 font-bold mb-1">
-                  KES {walletKES.toLocaleString()}
+    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full bg-linear-to-br from-black via-zinc-900 to-black/90 py-10">
+      {/* Wallet Hero Card */}
+      <div className="relative w-full max-w-2xl mb-12">
+        <div
+          className="glass bg-black/90 rounded-2xl p-5 md:p-7 flex flex-row items-center justify-between shadow-lg border border-yellow-400/20 backdrop-blur-xl"
+          style={{ boxShadow: "0 0 24px 4px #ffe06622, 0 2px 16px 0 #000a" }}
+        >
+          {/* Left: Wallet Info */}
+          <div className="flex-1 flex flex-col gap-2 items-start min-w-0">
+            <span className="text-yellow-300/90 text-sm font-bold uppercase tracking-widest mb-1">
+              NGC Wallet
+            </span>
+            <div className="flex flex-col gap-0.5">
+              <div className="text-4xl md:text-5xl font-extrabold tracking-tight text-yellow-300 leading-tight">
+                {wallet.balance}{" "}
+                <span className="text-xl text-yellow-100/80 font-bold align-super">
+                  NGC
                 </span>
               </div>
+              <div className="text-base text-yellow-100/80 font-semibold mt-0.5">
+                {wallet.fiat}
+              </div>
             </div>
-            {/* Vehicle Plate */}
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="plate"
-                className="text-yellow-100/80 font-semibold"
+            {/* Pill-style Action Buttons */}
+            <div className="flex flex-row gap-2 mt-3 w-full">
+              <button
+                className="px-5 py-1.5 rounded-full bg-yellow-400 text-black font-bold text-sm shadow-glow transition-all duration-200 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+                style={{ minWidth: 90 }}
               >
-                Vehicle Number Plate
-              </label>
-              <input
-                id="plate"
-                type="text"
-                value={plate}
-                onChange={(e) => setPlate(e.target.value.toUpperCase())}
-                onBlur={() => setTouched((t) => ({ ...t, plate: true }))}
-                className={`rounded-lg bg-black/40 border px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/80 transition font-mono tracking-widest uppercase ${touched.plate && !isPlateValid ? "border-red-400" : "border-yellow-400/20 focus:border-yellow-400"}`}
-                placeholder="e.g. KDA 123A"
-                maxLength={10}
-                autoComplete="off"
-                required
-              />
-              {touched.plate && !isPlateValid && (
-                <span className="text-xs text-red-400 mt-1">
-                  Enter a valid number plate (min 6 chars)
-                </span>
-              )}
-            </div>
-            {/* Fare Amount */}
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="fare"
-                className="text-yellow-100/80 font-semibold"
+                Pay Fare
+              </button>
+              <button
+                className="px-5 py-1.5 rounded-full bg-black/80 border border-yellow-400 text-yellow-300 font-semibold text-sm transition-all duration-200 hover:bg-yellow-400/10 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
+                style={{ minWidth: 90 }}
               >
-                Fare Amount (KES)
-              </label>
-              <input
-                id="fare"
-                type="number"
-                min="1"
-                value={fare}
-                onChange={(e) => setFare(e.target.value)}
-                onBlur={() => setTouched((t) => ({ ...t, fare: true }))}
-                className={`rounded-lg bg-black/40 border px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/80 transition font-mono ${touched.fare && !isFareValid ? "border-red-400" : "border-yellow-400/20 focus:border-yellow-400"}`}
-                placeholder="e.g. 80"
-                required
-              />
-              {touched.fare && !isFareValid && (
-                <span className="text-xs text-red-400 mt-1">
-                  Enter a valid fare amount
-                </span>
-              )}
-            </div>
-            {/* Confirm Button */}
-            <button
-              type="submit"
-              className={`mt-2 rounded-full bg-yellow-400 text-black font-bold py-3 px-8 transition-all shadow-glow text-lg flex items-center justify-center gap-2 ${canSubmit ? "hover:bg-yellow-300" : "opacity-60 cursor-not-allowed"}`}
-              disabled={!canSubmit}
-            >
-              {loading ? (
-                <span className="animate-spin h-5 w-5 border-2 border-yellow-300 border-t-transparent rounded-full" />
-              ) : (
-                "Confirm Payment"
-              )}
-            </button>
-            {/* Loading State Overlay */}
-            {loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur rounded-3xl z-10 animate-fade-in">
-                <span className="animate-spin h-10 w-10 border-4 border-yellow-300 border-t-transparent rounded-full mb-6" />
-                <div className="text-yellow-200 text-lg font-semibold mt-2 tracking-wide">
-                  Processing NGC payment...
-                </div>
-              </div>
-            )}
-          </form>
-        ) : (
-          <div className="flex flex-col items-center gap-6 animate-fade-in">
-            <div className="rounded-full bg-green-500/20 p-4 mb-2">
-              <svg
-                className="h-12 w-12 text-green-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                Receive
+              </button>
+              <button
+                className="px-5 py-1.5 rounded-full bg-black/80 border border-yellow-400 text-yellow-300 font-semibold text-sm transition-all duration-200 hover:bg-yellow-400/10 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
+                style={{ minWidth: 90 }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+                Top Up
+              </button>
             </div>
-            <div className="text-2xl font-bold text-green-300 mb-2">
-              Payment Successful
-            </div>
-            {/* Receipt Card */}
-            <div className="glass bg-black/80 rounded-2xl p-6 w-full max-w-xs border border-green-400/30 shadow-glow flex flex-col gap-3 text-yellow-100 animate-float">
-              <div className="flex justify-between">
-                <span className="font-semibold">Vehicle</span>
-                <span className="font-mono">{plate}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Amount</span>
-                <span>{fare} KES</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Time</span>
-                <span>{timestamp}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold">Status</span>
-                <span className="text-green-400 font-bold">PAID</span>
-              </div>
-            </div>
-            <button
-              onClick={reset}
-              className="mt-2 rounded-full bg-yellow-400 text-black font-bold py-2 px-8 hover:bg-yellow-300 transition shadow-glow"
-            >
-              New Payment
-            </button>
           </div>
-        )}
+          {/* Right: NGC Coin Image, smaller, less glow, decorative */}
+          <div className="flex items-center justify-center ml-4 md:ml-8">
+            <div className="relative flex items-center justify-center w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20">
+              <div className="absolute inset-0 rounded-full bg-yellow-300/10 blur-md z-0" />
+              <img
+                src={ngcCoin}
+                alt="NGC Coin"
+                className="w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 object-contain animate-float-slow drop-shadow-glow relative z-10"
+                style={{ filter: "drop-shadow(0 0 8px #ffe06644)" }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Recent Transactions Section */}
+      <div className="w-full max-w-2xl">
+        <div className="text-xl md:text-2xl font-bold mb-5 text-yellow-100 tracking-tight flex items-center gap-2">
+          Recent
+          <span className="text-yellow-300 animate-neon-pulse">
+            Transactions
+          </span>
+        </div>
+        <div className="flex flex-col gap-3">
+          {transactions.map((t, i) => (
+            <div
+              key={i}
+              className="glass bg-black/85 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between border border-yellow-400/10 shadow hover:shadow-glow transition-all duration-150 cursor-pointer group hover:bg-yellow-400/5 hover:border-yellow-400/20"
+            >
+              <div className="flex flex-col gap-0.5">
+                <span className="font-semibold text-yellow-200 text-base tracking-wide group-hover:text-yellow-300 transition">
+                  {t.type}
+                </span>
+                <span className="text-yellow-100/80 text-sm group-hover:text-yellow-200 transition">
+                  {t.desc}
+                </span>
+              </div>
+              <div className="flex flex-col md:items-end gap-0.5 mt-2 md:mt-0">
+                <span
+                  className={`font-bold text-lg ${t.amount.startsWith("+") ? "text-green-400" : "text-red-400"} tracking-wide group-hover:scale-105 transition-transform`}
+                >
+                  {t.amount}
+                </span>
+                <span className="text-yellow-100/60 text-xs tracking-widest group-hover:text-yellow-200 transition">
+                  {t.time}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
