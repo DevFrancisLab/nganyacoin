@@ -1,40 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import ngcCoin from "../assets/ngc_coin.png";
 
 export default function PayFarePage() {
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [showReceiveModal, setShowReceiveModal] = useState(false);
+  const [form, setForm] = useState({ plate: "", amount: "" });
+  const [receiveForm, setReceiveForm] = useState({ address: "", amount: "" });
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
+  const [topUpForm, setTopUpForm] = useState({ phone: "", amount: "" });
+  const [topUpConfirming, setTopUpConfirming] = useState(false);
+  const [topUpSuccess, setTopUpSuccess] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [receiveConfirming, setReceiveConfirming] = useState(false);
+  const [receiveSuccess, setReceiveSuccess] = useState(false);
   // Wallet data and transactions (mock)
   const wallet = {
     balance: "12,450",
     fiat: "KES 37,350",
   };
-  const actions = [
-    { label: "Pay Fare", onClick: () => {}, icon: "💸" },
-    { label: "Receive", onClick: () => {}, icon: "⬇️" },
-    { label: "Top Up", onClick: () => {}, icon: "➕" },
-  ];
+  // Remove unused actions
   const transactions = [
     {
       type: "Ride Payment",
-      desc: "CBD → Rongai",
       amount: "-KES 80",
       time: "Just now",
     },
     {
       type: "Reward",
-      desc: "Earned NGC",
       amount: "+12 NGC",
       time: "Today",
     },
     {
       type: "Top Up",
-      desc: "M-Pesa Deposit",
       amount: "+KES 500",
       time: "Yesterday",
     },
   ];
+  type Tx = { type: string; amount: string; time: string; id?: number };
+  const [modalTx, setModalTx] = useState<Tx | null>(null);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] w-full bg-linear-to-br from-black via-zinc-900 to-black/90 py-10">
+    <>
       {/* Wallet Hero Card */}
       <div className="relative w-full max-w-3xl mb-12">
         <div
@@ -62,21 +69,116 @@ export default function PayFarePage() {
               <button
                 className="flex-1 px-6 py-2.5 rounded-full bg-yellow-400 text-black font-extrabold text-lg shadow-glow transition-all duration-200 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
                 style={{ minWidth: 100 }}
+                onClick={() => {
+                  setShowPayModal(true);
+                  setSuccess(false);
+                  setForm({ plate: "", amount: "" });
+                  setConfirming(false);
+                }}
               >
                 Pay Fare
               </button>
               <button
                 className="flex-1 px-6 py-2.5 rounded-full bg-black/80 border border-yellow-400 text-yellow-300 font-bold text-lg transition-all duration-200 hover:bg-yellow-400/10 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                 style={{ minWidth: 100 }}
+                onClick={() => {
+                  setShowReceiveModal(true);
+                  setReceiveSuccess(false);
+                  setReceiveForm({ address: "", amount: "" });
+                  setReceiveConfirming(false);
+                }}
               >
                 Receive
               </button>
               <button
                 className="flex-1 px-6 py-2.5 rounded-full bg-black/80 border border-yellow-400 text-yellow-300 font-bold text-lg transition-all duration-200 hover:bg-yellow-400/10 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                 style={{ minWidth: 100 }}
+                onClick={() => {
+                  setShowTopUpModal(true);
+                  setTopUpSuccess(false);
+                  setTopUpForm({ phone: "", amount: "" });
+                  setTopUpConfirming(false);
+                }}
               >
                 Top Up
               </button>
+                  {/* Top Up Modal */}
+                  {showTopUpModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur animate-fade-in">
+                      <div className="glass rounded-3xl p-8 bg-black/90 border border-yellow-400/30 shadow-xl w-full max-w-md relative animate-float">
+                        <button
+                          className="absolute top-4 right-4 text-yellow-400 hover:text-yellow-200 text-2xl font-bold"
+                          onClick={() => setShowTopUpModal(false)}
+                          aria-label="Close"
+                        >
+                          ×
+                        </button>
+                        {!topUpSuccess ? (
+                          <>
+                            <div className="text-2xl font-bold text-yellow-300 mb-4">
+                              Top Up Wallet (M-Pesa)
+                            </div>
+                            <form
+                              className="flex flex-col gap-4"
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                setTopUpConfirming(true);
+                                setTimeout(() => {
+                                  setTopUpConfirming(false);
+                                  setTopUpSuccess(true);
+                                }, 1200);
+                              }}
+                            >
+                              <input
+                                className="rounded-lg bg-black/40 border border-yellow-400/30 px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 transition shadow-glow"
+                                placeholder="M-Pesa Phone Number"
+                                value={topUpForm.phone}
+                                required
+                                pattern="^\d{10,13}$"
+                                onChange={(e) =>
+                                  setTopUpForm((f) => ({ ...f, phone: e.target.value }))
+                                }
+                              />
+                              <input
+                                className="rounded-lg bg-black/40 border border-yellow-400/30 px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 transition shadow-glow"
+                                placeholder="Amount (KES)"
+                                type="number"
+                                min="1"
+                                value={topUpForm.amount}
+                                required
+                                onChange={(e) =>
+                                  setTopUpForm((f) => ({ ...f, amount: e.target.value }))
+                                }
+                              />
+                              <button
+                                type="submit"
+                                className="rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg mt-2 disabled:opacity-60"
+                                disabled={topUpConfirming}
+                              >
+                                {topUpConfirming ? "Processing..." : "Confirm Top Up"}
+                              </button>
+                            </form>
+                          </>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-4 py-8">
+                            <span className="text-4xl">✅</span>
+                            <div className="text-xl font-bold text-yellow-200 text-center">
+                              Top Up Request Submitted!
+                            </div>
+                            <div className="text-yellow-100/70 text-center">
+                              Request to top up <span className="font-semibold">KES {topUpForm.amount}</span> from <span className="font-semibold">{topUpForm.phone}</span> has been submitted.
+                            </div>
+                            <button
+                              className="mt-4 rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg"
+                              onClick={() => setShowTopUpModal(false)}
+                            >
+                              Close
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
             </div>
           </div>
           {/* Right: NGC Coin Image, balanced, premium */}
@@ -108,13 +210,11 @@ export default function PayFarePage() {
             <div
               key={i}
               className="glass bg-black/85 rounded-2xl p-6 flex flex-col md:flex-row md:items-center md:justify-between border border-yellow-400/10 shadow-lg hover:shadow-glow transition-all duration-150 cursor-pointer group hover:bg-yellow-400/5 hover:border-yellow-400/20"
+              onClick={() => setModalTx({ ...t, id: i + 1 })}
             >
               <div className="flex flex-col gap-1">
                 <span className="font-semibold text-yellow-200 text-lg tracking-wide group-hover:text-yellow-300 transition">
                   {t.type}
-                </span>
-                <span className="text-yellow-100/80 text-base group-hover:text-yellow-200 transition">
-                  {t.desc}
                 </span>
               </div>
               <div className="flex flex-col md:items-end gap-1 mt-2 md:mt-0">
@@ -131,6 +231,122 @@ export default function PayFarePage() {
           ))}
         </div>
       </div>
-    </div>
+      {/* Transaction Details Modal */}
+      {modalTx && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur animate-fade-in">
+          <div className="glass rounded-3xl p-8 bg-black/90 border border-yellow-400/30 shadow-xl w-full max-w-md relative animate-float">
+            <button
+              className="absolute top-4 right-4 text-yellow-400 hover:text-yellow-200 text-2xl font-bold"
+              onClick={() => setModalTx(null)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="text-2xl font-bold text-yellow-300 mb-4">
+              Transaction Details
+            </div>
+            <div className="flex flex-col gap-2 text-yellow-100/90">
+              <div>
+                <span className="font-bold text-yellow-300">Type:</span>{" "}
+                {modalTx ? modalTx.type : ""}
+              </div>
+              <div>
+                <span className="font-bold text-yellow-300">Amount:</span>{" "}
+                {modalTx ? modalTx.amount : ""}
+              </div>
+              <div>
+                <span className="font-bold text-yellow-300">Time:</span>{" "}
+                {modalTx ? modalTx.time : ""}
+              </div>
+              <div>
+                <span className="font-bold text-yellow-300">Transaction ID:</span>{" "}
+                {modalTx ? `TXN-${modalTx.id?.toString().padStart(3, "0")}` : ""}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Receive Modal */}
+      {showReceiveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur animate-fade-in">
+          <div className="glass rounded-3xl p-8 bg-black/90 border border-yellow-400/30 shadow-xl w-full max-w-md relative animate-float">
+            <button
+              className="absolute top-4 right-4 text-yellow-400 hover:text-yellow-200 text-2xl font-bold"
+              onClick={() => setShowReceiveModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            {!receiveSuccess ? (
+              <>
+                <div className="text-2xl font-bold text-yellow-300 mb-4">
+                  Receive NGC (Ethereum)
+                </div>
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setReceiveConfirming(true);
+                    setTimeout(() => {
+                      setReceiveConfirming(false);
+                      setReceiveSuccess(true);
+                    }, 1200);
+                  }}
+                >
+                  <input
+                    className="rounded-lg bg-black/40 border border-yellow-400/30 px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 transition shadow-glow"
+                    placeholder="Ethereum Wallet Address"
+                    value={receiveForm.address}
+                    required
+                    onChange={(e) =>
+                      setReceiveForm((f) => ({ ...f, address: e.target.value }))
+                    }
+                  />
+                  <input
+                    className="rounded-lg bg-black/40 border border-yellow-400/30 px-4 py-2 text-yellow-100 placeholder:text-yellow-100/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 transition shadow-glow"
+                    placeholder="Amount (NGC)"
+                    type="number"
+                    min="1"
+                    value={receiveForm.amount}
+                    required
+                    onChange={(e) =>
+                      setReceiveForm((f) => ({ ...f, amount: e.target.value }))
+                    }
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg mt-2 disabled:opacity-60"
+                    disabled={receiveConfirming}
+                  >
+                    {receiveConfirming ? "Processing..." : "Confirm Receive"}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-4 py-8">
+                <span className="text-4xl">✅</span>
+                <div className="text-xl font-bold text-yellow-200 text-center">
+                  Receive Request Submitted!
+                </div>
+                <div className="text-yellow-100/70 text-center">
+                  Request to receive {" "}
+                  <span className="font-semibold">
+                    {receiveForm.amount} NGC
+                  </span>{" "}to {" "}
+                  <span className="font-semibold">{receiveForm.address}</span>{" "}
+                  has been submitted.
+                </div>
+                <button
+                  className="mt-4 rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg"
+                  onClick={() => setShowReceiveModal(false)}
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

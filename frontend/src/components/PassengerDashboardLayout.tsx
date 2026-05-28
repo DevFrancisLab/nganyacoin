@@ -104,7 +104,6 @@ function TransactionsPage() {
         {[
           { key: "all", label: "All" },
           { key: "paid", label: "Paid" },
-          { key: "pending", label: "Pending" },
         ].map((f) => (
           <button
             key={f.key}
@@ -129,9 +128,6 @@ function TransactionsPage() {
                 Vehicle
               </th>
               <th className="px-4 py-3 text-left font-semibold text-yellow-300">
-                Route
-              </th>
-              <th className="px-4 py-3 text-left font-semibold text-yellow-300">
                 Amount
               </th>
               <th className="px-4 py-3 text-left font-semibold text-yellow-300">
@@ -145,7 +141,7 @@ function TransactionsPage() {
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="text-center py-8 text-yellow-100/50">
+                <td colSpan={4} className="text-center py-8 text-yellow-100/50">
                   No transactions found.
                 </td>
               </tr>
@@ -159,7 +155,6 @@ function TransactionsPage() {
                 <td className="px-4 py-3 font-semibold text-yellow-200">
                   {t.vehicle}
                 </td>
-                <td className="px-4 py-3">{t.route}</td>
                 <td className="px-4 py-3 font-bold">
                   <span
                     className={
@@ -206,10 +201,6 @@ function TransactionsPage() {
               <div>
                 <span className="font-bold text-yellow-300">Vehicle:</span>{" "}
                 {modalTx.vehicle}
-              </div>
-              <div>
-                <span className="font-bold text-yellow-300">Route:</span>{" "}
-                {modalTx.route}
               </div>
               <div>
                 <span className="font-bold text-yellow-300">Amount:</span>{" "}
