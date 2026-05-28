@@ -10,155 +10,15 @@ import {
   User,
   TrendingUp,
 } from "lucide-react";
+import ngcCoin from "../assets/ngc_coin.png";
 
 const navItems = [
-  { label: "Pay Fare", icon: CreditCard, key: "payfare" },
   { label: "Wallet", icon: Wallet, key: "wallet" },
   { label: "Transactions", icon: List, key: "transactions" },
   { label: "Rewards", icon: Gift, key: "rewards" },
 ];
 // ...existing code...
-function WalletPage() {
-  // Mock data
-  const balance = 12450;
-  const fiat = 24800;
-  const animatedBalance = balance; // UI only, could animate with useEffect
-  const summary = [
-    {
-      label: "Total Top-ups",
-      value: "KES 8,000",
-      icon: <CreditCard className="size-5 text-yellow-400" />,
-    },
-    {
-      label: "Total Spent",
-      value: "KES 5,600",
-      icon: <Wallet className="size-5 text-yellow-400" />,
-    },
-    {
-      label: "Rewards Earned",
-      value: "1,250 NGC",
-      icon: <Gift className="size-5 text-yellow-400" />,
-    },
-  ];
-  const credit = 500;
-  const creditLimit = 1000;
-  const repaymentPercent = (credit / creditLimit) * 100;
-  const mpesaNumber = "+254 712 345678";
-
-  return (
-    <div className="flex flex-col gap-8">
-      {/* Wallet Balance Hero Card */}
-      <div className="glass bg-black/70 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between shadow-xl animate-float">
-        <div>
-          <div className="text-lg text-yellow-100/80 mb-1">Wallet Balance</div>
-          <div className="text-5xl md:text-6xl font-extrabold text-yellow-300 tracking-tight drop-shadow-glow flex items-end gap-2">
-            <span className="animate-pulse-slow">
-              {animatedBalance.toLocaleString()}
-            </span>
-            <span className="text-2xl text-yellow-100/70 font-bold mb-2">
-              NGC
-            </span>
-          </div>
-          <div className="text-md text-yellow-100/60 mb-4">
-            KES {fiat.toLocaleString()}
-          </div>
-          <div className="flex gap-4 mt-4">
-            <button className="rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg">
-              Top Up Wallet
-            </button>
-            <button className="rounded-full bg-black/60 border border-yellow-400 text-yellow-300 font-semibold py-2.5 px-8 hover:bg-yellow-400 hover:text-black transition text-lg">
-              Withdraw
-            </button>
-          </div>
-        </div>
-        <div className="mt-8 md:mt-0 md:ml-12 flex flex-col items-center">
-          <Wallet className="size-20 text-yellow-400 drop-shadow-glow animate-float" />
-        </div>
-      </div>
-
-      {/* Transaction Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {summary.map((s) => (
-          <div
-            key={s.label}
-            className="glass rounded-2xl p-6 flex flex-col items-center border border-yellow-400/20 bg-black/60 hover:-translate-y-1 hover:shadow-glow transition-all cursor-pointer"
-          >
-            <div className="mb-2">{s.icon}</div>
-            <div className="text-2xl font-bold text-yellow-200 drop-shadow-glow">
-              {s.value}
-            </div>
-            <div className="text-xs text-yellow-100/60 mt-1">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Fare Credit Section */}
-      <div className="glass rounded-2xl p-6 bg-black/70 border border-yellow-400/20 flex flex-col md:flex-row gap-6 items-center shadow-xl animate-float">
-        <div className="flex-1">
-          <div className="text-yellow-300 font-semibold mb-2">Fare Credit</div>
-          <div className="text-3xl font-bold text-yellow-200 mb-2">
-            KES {credit.toLocaleString()}
-          </div>
-          <button className="rounded-full bg-yellow-400 text-black font-bold py-2.5 px-8 hover:bg-yellow-300 transition shadow-glow text-lg mb-2">
-            Borrow Fare
-          </button>
-          <div className="text-xs text-yellow-100/60 mb-1">
-            Available credit for rides
-          </div>
-        </div>
-        <div className="flex-1 w-full">
-          <div className="text-xs text-yellow-100/60 mb-1">
-            Repayment Progress
-          </div>
-          <div className="w-full bg-yellow-400/10 rounded-full h-3 mb-2 overflow-hidden">
-            <div
-              className="bg-yellow-400 h-3 rounded-full transition-all"
-              style={{ width: `${repaymentPercent}%` }}
-            />
-          </div>
-          <div className="text-xs text-yellow-100/40">
-            {credit} / {creditLimit} KES repaid
-          </div>
-        </div>
-      </div>
-
-      {/* Linked Payment Methods */}
-      <div className="glass rounded-2xl p-6 bg-black/70 border border-yellow-400/20 flex flex-col gap-4 shadow-xl animate-float">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-yellow-300 font-semibold">
-            Linked Payment Methods
-          </div>
-          <button className="rounded-full bg-yellow-400 text-black font-bold py-1.5 px-5 hover:bg-yellow-300 transition shadow-glow text-sm">
-            Add
-          </button>
-        </div>
-        <div className="flex items-center justify-between bg-black/60 rounded-xl px-4 py-3 border border-yellow-400/10">
-          <div className="flex items-center gap-3">
-            <CreditCard className="size-5 text-yellow-400" />
-            <span className="text-yellow-100 font-semibold">M-Pesa</span>
-            <span className="text-yellow-100/70">{mpesaNumber}</span>
-          </div>
-          <button className="rounded-full bg-black/60 border border-yellow-400 text-yellow-300 font-semibold py-1 px-4 hover:bg-yellow-400 hover:text-black transition text-sm">
-            Remove
-          </button>
-        </div>
-      </div>
-
-      {/* Spending Overview Section */}
-      <div className="glass rounded-2xl p-6 bg-black/70 border border-yellow-400/20 flex flex-col gap-4 shadow-xl animate-float">
-        <div className="text-yellow-300 font-semibold mb-2">
-          Spending Overview
-        </div>
-        <div className="flex items-center justify-center h-40">
-          {/* Chart Placeholder */}
-          <div className="w-full h-32 bg-linear-to-br from-yellow-400/10 via-yellow-400/5 to-black/30 rounded-2xl flex items-center justify-center border border-yellow-400/10">
-            <span className="text-yellow-100/40">[Chart Placeholder]</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// WalletPage removed. Wallet now uses PayFarePage only.
 function TransactionsPage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -415,8 +275,7 @@ function FallbackPage() {
 }
 
 const pageComponents: Record<string, ReactNode> = {
-  payfare: <PayFarePage />,
-  wallet: <WalletPage />,
+  wallet: <PayFarePage />,
   transactions: <TransactionsPage />,
   rewards: <RewardsPage />,
 };
@@ -425,14 +284,14 @@ export default function PassengerDashboardLayout() {
   // Listen for global event to open dashboard
   React.useEffect(() => {
     const handler = () => {
-      setActivePage("payfare");
+      setActivePage("wallet");
       setFade(false);
       setTimeout(() => setFade(true), 180);
     };
     window.addEventListener("nganya:open-dashboard", handler);
     return () => window.removeEventListener("nganya:open-dashboard", handler);
   }, []);
-  const [activePage, setActivePage] = useState("payfare");
+  const [activePage, setActivePage] = useState("wallet");
   const [fade, setFade] = useState(true);
 
   // Handle fade transition
@@ -450,11 +309,15 @@ export default function PassengerDashboardLayout() {
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-65 bg-black/60 border-r border-yellow-400/20 glass z-30 flex flex-col py-8 px-6 shadow-xl">
         <div className="flex items-center gap-3 mb-12">
-          <span className="grid place-items-center size-10 rounded-lg bg-primary/15 border border-primary/30 text-primary text-2xl font-black glow-yellow">
-            N
+          <span className="grid place-items-center size-10 rounded-lg bg-primary/15 border border-primary/30 text-primary glow-yellow overflow-hidden">
+            <img
+              src={ngcCoin}
+              alt="NGC Coin Logo"
+              className="w-8 h-8 object-contain"
+            />
           </span>
           <span className="text-xl font-extrabold tracking-tight text-yellow-300">
-            NganyaCoin <span className="text-yellow-400">(NGC)</span>
+            NganyaCoin
           </span>
         </div>
         <nav className="flex flex-col gap-2">

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import heroImg from "@/assets/matatu-hero.png";
+import ngcCoin from "../assets/ngc_coin.png";
 import {
   Wallet, LineChart, Smartphone, BarChart3, ShieldCheck, ArrowRight,
   Play, Bus, CreditCard, Activity, TrendingUp, Clock, Eye, FileBarChart,
@@ -34,9 +35,16 @@ function Navbar() {
   return (
     <header className={`fixed top-0 inset-x-0 z-50 transition-colors ${scrolled ? "bg-background/90 backdrop-blur border-b border-border shadow-sm" : "bg-transparent"}`}>
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2 group">
-          <span className="grid place-items-center size-9 rounded-lg bg-primary/15 border border-primary/30 text-primary glow-yellow">
-            <Bus className="size-5" />
+        <a
+          href="#home"
+          className="flex items-center gap-2 group"
+        >
+          <span className="grid place-items-center size-9 rounded-lg bg-primary/15 border border-primary/30 text-primary glow-yellow overflow-hidden">
+            <img
+              src={ngcCoin}
+              alt="NGC Coin Logo"
+              className="w-7 h-7 object-contain"
+            />
           </span>
           <span className="text-lg font-bold tracking-tight">
             Nganya<span className="text-primary">Coin</span>
